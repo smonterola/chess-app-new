@@ -1,5 +1,5 @@
-import { PieceCount, PieceMap } from "../models";
-import { PieceColor, PieceType } from "../Constants";
+import { PieceCount, PieceMap } from "../../models";
+import { PieceColor, PieceType } from "../../Constants";
 import { 
     endgame, middleGame, threshold, 
     pairsMiddle, pairsEnd, pairsThres ,

@@ -1,8 +1,10 @@
-import { GameState, PieceColor } from "../Constants";
-import { Board, BoardMap, Piece, PieceMap, getPOV } from "../models";
-import { findKingKey } from "../rules";
-import Rules from "../rules/Rules";
+import { GameState, PieceColor } from "../../Constants";
+import { Board, BoardMap, Piece, getPOV } from "../../models";
+import { findKingKey } from "../../rules";
+import Rules from "../../rules/Rules";
 import { evaluate } from "./EvaluateBoard";
+import { history } from "../../components/Chessboard/Chessboard";
+import { boardToFen } from "../../rules";
 
 type MovesScore = [string[], number];
 
@@ -22,10 +24,13 @@ export function miniMaxAlphaBeta(
     if (depth <= 0) {
         return [path, evaluate(pieceMap)];
     }
-    const fiftyMoveDraw: boolean = board.attributes[6] >= 50;
-    if (fiftyMoveDraw) {
-        return [path, 0];
+    const drawPenalty = -0.1*getPOV(color);
+    const pieceFen = boardToFen(board).split(" ")[0];
+    const fiftyMoveDraw: boolean = board.attributes[6] >= 49;
+    if (fiftyMoveDraw || history.get(pieceFen) === 2) {
+        return [path, drawPenalty];
     }
+
     /* recursion */
     kingKey = findKingKey(pieceMap, kingKey, (color));
     const king: Piece = pieceMap.get(kingKey)!;
@@ -38,7 +43,7 @@ export function miniMaxAlphaBeta(
         case GameState.CHECKMATE:
             return [path, -1000 * getPOV(color)];
         case GameState.STALEMATE:
-            return [path, 0];
+            return [path, drawPenalty];
     }
     const size = newPieceMap.size;
     const futility: boolean = (depth <= futile) ? true : false

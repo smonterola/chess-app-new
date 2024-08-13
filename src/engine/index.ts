@@ -1,4 +1,2 @@
-export * from "./EvaluateBoard"
-export * from "./evalConstants"
-export * from "./Engine"
+export * from "./MiniMax"
 export * from "./countMoves"

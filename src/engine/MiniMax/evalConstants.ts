@@ -1,4 +1,4 @@
-import { PieceType } from "../Constants";
+import { PieceType } from "../../Constants";
 
 //this system is based on "Larry Laufman's 2021 system"
 

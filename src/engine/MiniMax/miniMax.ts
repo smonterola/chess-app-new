@@ -41,7 +41,7 @@ export function miniMaxAlphaBeta(
     /* end if the game is over */
     switch(status) {
         case GameState.CHECKMATE:
-            return [path, -1000 * getPOV(color)];
+            return [path, (-1000 - depth) * getPOV(color)]; //this way it favors faster checkmates
         case GameState.STALEMATE:
             return [path, drawPenalty];
     }

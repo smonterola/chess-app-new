@@ -1,0 +1,58 @@
+:root {
+    --tileSize: 100px; /*default value*/
+}
+
+.tile {
+    display: grid;
+    place-content: center;
+    width: var(--tileSize);
+    height: var(--tileSize);
+}
+
+.tile .chess-piece {
+    width: var(--tileSize);
+    height: var(--tileSize);
+    background-repeat: no-repeat;
+    background-size: calc(var(--tileSize)*0.9);
+    background-position: center;
+    /*position: absolute;*/
+}
+
+.tile .chess-piece:hover {
+    cursor: grab;
+}
+
+.tile .chess-piece:active {
+    cursor: grabbing;
+}
+
+.black-tile {
+    background-color: rgb(92, 127, 106); /* burlywood, [92, 127, 106] */
+}
+
+.white-tile {
+    background-color: cornsilk; /*cornsilk */
+}
+
+.tile img {
+    width: calc(var(--tileSize)*0.8);
+    /*height: calc(var(--tileSize)*0.9);*/
+}
+
+.tile-highlight:not(.chess-piece-tile)::before {
+    content: " ";
+    width: calc(var(--tileSize)*0.24);
+    height: calc(var(--tileSize)*0.24);
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.tile-highlight.chess-piece-tile::before {
+    position: absolute;
+    content: " ";
+    background-position: center;
+    width: calc(var(--tileSize)*0.88);
+    height: calc(var(--tileSize)*0.88);
+    border: calc(var(--tileSize)*0.05) solid rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+}

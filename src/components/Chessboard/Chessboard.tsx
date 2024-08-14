@@ -40,6 +40,9 @@ export default function Chessboard() {
             setBoards(newBoardMap);
             const pieceFen = boardToFen(board).split(" ")[0];
             history.set(pieceFen, history.has(pieceFen) ? history.get(pieceFen)! + 1 : 1);
+            if (history.get(pieceFen)! >= 3) {
+                GAMEOVER = true;
+            }
             return;
         }
         const getX = (Math.floor((e.clientX - chessboard.offsetLeft) / TILESIZE));

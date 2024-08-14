@@ -11,7 +11,7 @@ export function botPlay(board: Board, boardMap: BoardMap): [string, Board, Board
 
     console.log("searching for the best move:")
     const start = performance.now();
-    const bestMoveScore = iterativeDeepening(board, 6, 2, botTurn, [], "e1", "e1");
+    const bestMoveScore = iterativeDeepening(board, 5000, 2, botTurn, [], "e1", "e1");
     const end = performance.now();
     const move = bestMoveScore[0][0];
     const iterTime = Math.round(end - start)/1000.

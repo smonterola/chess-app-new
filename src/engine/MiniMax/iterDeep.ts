@@ -11,7 +11,7 @@ type MovesScore = [string[], number];
 
 export function iterativeDeepening(
     board: Board, 
-    depth: number,
+    limit: number,
     futile: number,
     color: PieceColor,
     previousPath: string[],
@@ -20,14 +20,19 @@ export function iterativeDeepening(
 ): MovesScore { 
     let bestVariation: MovesScore = [previousPath, 0];
     const start = performance.now();
-    for (let i = 0; i <= 10; i++) {
+    for (let i = 0; i <= 40; i++) {
         const newVariation = miniMax(
             board, i, futile, -9999, 9999,
             color, [], bestVariation[0],
-            kingKey, nextKing, start
+            kingKey, nextKing, start, limit
         );
         if (newVariation[0][0] !== "terminated") {
             bestVariation = newVariation;
+        } else {
+            break;
+        }
+        if (Math.abs(newVariation[1]) === 1000) {
+            return bestVariation;
         }
         console.log(bestVariation)
         //console.log(bestVariation[0])
@@ -46,6 +51,7 @@ export function miniMax(
     kingKey: string,
     nextKing: string,
     start: number,
+    limit: number,
 ): MovesScore {
     const pieceMap = board.pieces;
     /* base case */
@@ -58,7 +64,7 @@ export function miniMax(
     if (fiftyMoveDraw || history.get(pieceFen) === 2) {
         return [currentPath, drawPenalty];
     }
-    if ((performance.now() - start)/1000 > 5) {
+    if ((performance.now() - start) > limit) {
         return [["terminated"], 0];
     }
     /* recursion */
@@ -94,7 +100,7 @@ export function miniMax(
                 branchBoard,      (depth-1)*stop,   futile,
                 alpha,            beta,
                 PieceColor.BLACK, currentPath, previousPath, 
-                nextKing,         kingKey, start,
+                nextKing,         kingKey, start, limit
             );
             if (moves[0] === "terminated") {
                 return [["terminated"], 0];
@@ -125,7 +131,7 @@ export function miniMax(
                 branchBoard,      (depth-1)*stop,   futile,
                 alpha,            beta,
                 PieceColor.WHITE, currentPath, previousPath,
-                nextKing,         kingKey, start,
+                nextKing,         kingKey, start, limit
             );
             if (moves[0] === "terminated") {
                 return [["terminated"], 0];

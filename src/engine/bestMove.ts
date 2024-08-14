@@ -2,17 +2,32 @@ import { nextTurn, PieceColor } from "../Constants";
 import { Board, BoardMap, Piece } from "../models";
 import { miniMaxAlphaBeta } from "./MiniMax";
 import { findKingKey } from "../rules";
+import { miniMax } from "./MiniMax/iterDeep";
 import Rules from "../rules/Rules";
+import { iterativeDeepening } from "./MiniMax/iterDeep";
 
 export function botPlay(board: Board, boardMap: BoardMap): [string, Board, BoardMap] {
     const botTurn = (board.attributes[0]) ? PieceColor.WHITE : PieceColor.BLACK;
+
     console.log("searching for the best move:")
     const start = performance.now();
-    const bestMoveScore = miniMaxAlphaBeta(board, 6, 2, -9999, 9999, botTurn, [], "e1", "e1");
+    const bestMoveScore = iterativeDeepening(board, 6, 2, botTurn, [], "e1", "e1");
     const end = performance.now();
     const move = bestMoveScore[0][0];
+    const iterTime = Math.round(end - start)/1000.
+    console.log("iter evaluation time:", iterTime, "seconds");
     console.log("best sequence", bestMoveScore[0], "has an evaluation of", bestMoveScore[1])
-    console.log("evaluation time:", Math.round(end - start)/1000, "seconds");
+
+    /*
+    const start1 = performance.now();
+    const bestMoveScore1 = miniMax(board, 5, 0, -9999, 9999, botTurn, [], [], "e1", "e1");
+    const end1 = performance.now();
+    const move1 = bestMoveScore1[0][0];
+    const miniTime =  Math.round(end1 - start1)/1000
+    console.log("mini evaluation time:", miniTime, "seconds");
+    //console.log("best sequence", bestMoveScore1[0], "has an evaluation of", bestMoveScore1[1])
+    */
+
     const newBoard = boardMap.get(move)!;
     if (!newBoard) {
         return ["GAME OVER", board, boardMap]

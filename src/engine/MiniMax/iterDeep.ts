@@ -31,7 +31,7 @@ export function iterativeDeepening(
         } else {
             break;
         }
-        if (Math.abs(newVariation[1]) === 1000) {
+        if (Math.abs(newVariation[1]) >= 1000) {
             return bestVariation;
         }
         console.log(bestVariation)

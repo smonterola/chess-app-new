@@ -3,10 +3,10 @@ import { PieceColor, PieceType } from "../../Constants";
 import { 
     endgame, middleGame, threshold, 
     pairsMiddle, pairsEnd, pairsThres ,
-    middleActivity, thresholdActivity, endgameActivity,
+    middleActivity, thresholdActivity, endgameActivity, simple
 } from "./evalConstants";
 
-export function evaluate(pieceMap: PieceMap): number {
+export function stronger_evaluate(pieceMap: PieceMap): number {
     let evalutation: number = 0;
     const logPieceMap: PieceCount = logPieces(pieceMap);
     let [pieceValues, pairValues, activityValues] = [threshold, pairsThres, thresholdActivity];
@@ -34,14 +34,14 @@ export function evaluate(pieceMap: PieceMap): number {
         }
         evalutation += pieceScore * POV;
     }
-    /*
+    /*//
     let activity = 0;
     for (let piece of pieceMap.values()) { //rudimentary way to score "piece activity"
         let moves = (piece.moveMap ? piece.moveMap.size : 0) * piece.POV * 0.01 * activityValues.get(piece.type)!;
         activity += moves
     }
     evalutation += activity;
-    */
+    //*/
     return Math.round(evalutation * 100) / 100;
 }
 
@@ -55,4 +55,12 @@ export function logPieces(pieceMap: PieceMap): Map<string, number> {
         logPieces.set(key, count! + 1);
     }
     return logPieces;
+}
+
+export function evaluate(pieceMap: PieceMap): number {
+    let evaluation = 0;
+    for (const piece of pieceMap.values()) {
+        evaluation += piece.POV * (simple.get(piece.type)! + piece.moveMap!.size * 0.001 * middleActivity.get(piece.type)!);
+    }
+    return Math.round(evaluation * 1000) / 1000
 }

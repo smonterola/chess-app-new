@@ -1,5 +1,13 @@
 import { PieceType } from "../../Constants";
 
+export const simple = new Map<PieceType, number>([
+    [PieceType.PAWN, 1.0],
+    [PieceType.ROOK, 5.0],
+    [PieceType.NGHT, 3.0],
+    [PieceType.BSHP, 3.1],
+    [PieceType.QUEN, 9.0],
+    [PieceType.KING, 512], 
+]);
 //this system is based on "Larry Laufman's 2021 system"
 
 export const middleGame = new Map<PieceType, number>([
@@ -49,11 +57,11 @@ export const pairsEnd = new Map<PieceType, number>([
 
 export const middleActivity = new Map<PieceType, number>([
     [PieceType.PAWN, 0.0],
-    [PieceType.ROOK, 0.1],
-    [PieceType.NGHT, 1.0],
-    [PieceType.BSHP, 1.0],
+    [PieceType.ROOK, 0.0],
+    [PieceType.NGHT, 1.5],
+    [PieceType.BSHP, 0.5],
     [PieceType.QUEN, 0.0],
-    [PieceType.KING,-0.3],
+    [PieceType.KING, 0.0],
 ]);
 
 export const thresholdActivity = new Map<PieceType, number>([

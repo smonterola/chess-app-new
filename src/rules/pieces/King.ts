@@ -25,6 +25,7 @@ export function castle(
     }
     if (
         (((color) && wLong) || (!(color) && bLong)) &&
+        !new Position(1, rank).isOccupied(pMap) &&
         canPass(pMap, new Position(2, rank), king.color) &&
         canPass(pMap, new Position(3, rank), king.color) //need to make sure the rook is here
     ){

@@ -43,8 +43,8 @@ export function updateBoard(
         if (target.type === PieceType.ROOK) {
             const topRight = new Position(7,7);
             const topLeft = new Position(0,7);
-            const bottomRight = new Position(0,0);
-            const bottomLeft = new Position(7, 0);
+            const bottomRight = new Position(7,0);
+            const bottomLeft = new Position(0,0);
             if (target.position.samePosition(topRight)) {
                 bS1 = 0;
             } else if (target.position.samePosition(topLeft)) {

@@ -5,6 +5,7 @@ import Rules from "../../rules/Rules";
 import { evaluate } from "./EvaluateBoard";
 import { history } from "../../components/Chessboard/Chessboard";
 import { boardToFen } from "../../rules";
+import path from "path";
 
 type MovesScore = [string[], number];
 //const start = performance.now();
@@ -12,7 +13,6 @@ type MovesScore = [string[], number];
 export function iterativeDeepening(
     board: Board, 
     limit: number,
-    futile: number,
     color: PieceColor,
     previousPath: string[],
     kingKey: string,
@@ -22,7 +22,7 @@ export function iterativeDeepening(
     const start = performance.now();
     for (let i = 0; i <= 40; i++) {
         const newVariation = miniMax(
-            board, i, futile, -9999, 9999,
+            board, i, -9999, 9999,
             color, [], bestVariation[0],
             kingKey, nextKing, start, limit
         );
@@ -42,7 +42,6 @@ export function iterativeDeepening(
 export function miniMax(
     board: Board, 
     depth: number,
-    futile: number,
     alpha: number,
     beta: number,
     color: PieceColor,
@@ -67,6 +66,7 @@ export function miniMax(
     if ((performance.now() - start) > limit) {
         return [["terminated"], 0];
     }
+    let newDepth = depth - 1;
     /* recursion */
     kingKey = findKingKey(pieceMap, kingKey, (color));
     const king: Piece = pieceMap.get(kingKey)!;
@@ -81,26 +81,21 @@ export function miniMax(
         case GameState.STALEMATE:
             return [currentPath, drawPenalty];
     }
-    const size = newPieceMap.size;
-    const futility: boolean = (depth <= futile) ? true : false
+    const futility: boolean = (depth <= 1) ? true : false
     let bestPath: string[] = currentPath;
     if (color === PieceColor.WHITE) {
         let maxEval = -4096;
         for (const [move, branchBoard] of sortMoves(nextBoards, previousPath)) {
-            const branchMap = branchBoard.pieces
-            let stop = 1;
-            if (futility) {
-                if (branchMap.size - 0 === size) {
-                    stop = 0;
-                } else {
-                     //if theres a last min capture, then stop because we need to always let the opponent respond
-                }
+            if (futility && move.match(/([+x=])/)) {
+                //console.log(move)
+                newDepth = depth - 0.4;
             }
             const [moves, evaluation] = miniMax(
-                branchBoard,      (depth-1)*stop,   futile,
-                alpha,            beta,
-                PieceColor.BLACK, currentPath, previousPath, 
-                nextKing,         kingKey, start, limit
+                branchBoard,      newDepth,
+                alpha,            beta,             PieceColor.BLACK, 
+                currentPath,      previousPath, 
+                nextKing,         kingKey, 
+                start,            limit
             );
             if (moves[0] === "terminated") {
                 return [["terminated"], 0];
@@ -118,20 +113,16 @@ export function miniMax(
     } else { /* color === PieceColor.BLACK */
         let minEval = 4096;
         for (const [move, branchBoard] of sortMoves(nextBoards, previousPath)) {
-            const branchMap = branchBoard.pieces;
-            let stop = 1;
-            if (futility) {
-                if (branchMap.size - 0 === size) {
-                    stop = 0;
-                } else {
-                     //if theres a last min capture, then stop because we need to always let the opponent respond
-                }
+            if (futility && move.match(/([+x=])/)) {
+                //console.log(move)
+                newDepth = depth - 0.4;
             }
             const [moves, evaluation] = miniMax(
-                branchBoard,      (depth-1)*stop,   futile,
-                alpha,            beta,
-                PieceColor.WHITE, currentPath, previousPath,
-                nextKing,         kingKey, start, limit
+                branchBoard,      newDepth,
+                alpha,            beta,             PieceColor.WHITE, 
+                currentPath,      previousPath, 
+                nextKing,         kingKey, 
+                start,            limit
             );
             if (moves[0] === "terminated") {
                 return [["terminated"], 0];
@@ -154,7 +145,7 @@ export function sortMoves(boardMap: BoardMap, previousPath: string[]) {
     const direction = (moveNBoard[0][1].attributes[0]) ? 1 : -1; 
     moveNBoard = moveNBoard.sort((a, b) => sortByEval(a[1], b[1], direction))
     //moveNBoard = moveNBoard.sort((a, b) => goCenter(a[0]) - goCenter(b[0]));
-    let priority: [string, number][] = [
+    const priority: [string, number][] = [
         //["1", -1], ["8", -1], ["7", -1], ["2", -1], 
         //these ranks are on the end, they can be considered last
         //["g", 1], ["b", 1], ["c", 1], 
@@ -174,7 +165,7 @@ export function sortMoves(boardMap: BoardMap, previousPath: string[]) {
         ["x", 1], ["=", 1], 
         //prioritize captures and promotion
     ]
-    for (let move of previousPath.reverse()) {
+    for (const move of previousPath.reverse()) {
         priority.push([move, 1])
     }
     previousPath.reverse();

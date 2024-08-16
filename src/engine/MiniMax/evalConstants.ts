@@ -81,3 +81,12 @@ export const endgameActivity = new Map<PieceType, number>([
     [PieceType.QUEN, 1.5],
     [PieceType.KING, 2.0],
 ]);
+
+export const simpleActivity = new Map<PieceType, number>([
+    [PieceType.PAWN, 0.0],
+    [PieceType.ROOK, 0.1],
+    [PieceType.NGHT, 1.5],
+    [PieceType.BSHP, 0.5],
+    [PieceType.QUEN, 0.1],
+    [PieceType.KING,-0.5],
+]);

@@ -1,6 +1,6 @@
 import { Board, Piece } from "../../models";
 import Rules from "../../rules/Rules";
-import { fenToBoard, findKingKey } from "../../rules";
+import { fenToBoard, findKingKey, fixFen } from "../../rules";
 import { PieceColor } from "../../Constants";
 import axios from 'axios';
 import { APIKEY } from "../../misc/APIKEY";
@@ -12,11 +12,11 @@ const initFenBoard: Board = fenToBoard(initialFen);
 const kingKey = findKingKey(initFenBoard.pieces, "e1", (initFenBoard.attributes[0]) ? PieceColor.WHITE : PieceColor.BLACK);
 const otherKey = findKingKey(initFenBoard.pieces, "e8", !(initFenBoard.attributes[0]) ? PieceColor.WHITE : PieceColor.BLACK);
 const king: Piece = initFenBoard.pieces.get(kingKey)!
-axios.get(
-    "https://chess-api.roastlemon.com/engine",
+const encoded_fen = fixFen(initialFen);
+axios.post(
+    `https://chess-api.roastlemon.com/engine/${encoded_fen}`,
     {
-        headers: { 'Authorization': `Bearer ${APIKEY}`},
-        params: {'fen': initialFen}
+        headers: {'Authorization': `Bearer ${APIKEY}`},
     }
 ).
     then(res => {
@@ -24,4 +24,5 @@ axios.get(
     }).catch(err => {
         console.log(err)
     });
+
 export const [initialBoard, initialBoardMap] = new Rules().populateValidMoves(initFenBoard, king, otherKey);

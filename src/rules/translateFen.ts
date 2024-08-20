@@ -2,6 +2,22 @@ import { PieceColor, PieceType, xAxis } from "../Constants";
 import { Board, PieceMap, Position } from "../models";
 import { Piece } from "../models";
 
+export function fixFen(fen: string): string {
+    let encoded_fen = ""
+    for (let char of fen) {
+        switch(char) {
+            case "/":
+                encoded_fen += "|";
+                break;
+            case " ":
+                encoded_fen += "_"
+                break;
+            default:
+                encoded_fen += char
+        }
+    }
+    return encoded_fen
+}
 export function boardToFen(board: Board): string {
     const pieceMap = board.pieces;
     let fen: string = "";

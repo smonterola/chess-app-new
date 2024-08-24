@@ -13,7 +13,7 @@ const kingKey = findKingKey(initFenBoard.pieces, "e1", (initFenBoard.attributes[
 const otherKey = findKingKey(initFenBoard.pieces, "e8", !(initFenBoard.attributes[0]) ? PieceColor.WHITE : PieceColor.BLACK);
 const king: Piece = initFenBoard.pieces.get(kingKey)!
 const encoded_fen = fixFen(initialFen);
-axios.post(
+axios.get(
     `https://chess-api.roastlemon.com/engine/${encoded_fen}`,
     {
         headers: {'Authorization': `Bearer ${APIKEY}`},
@@ -25,4 +25,15 @@ axios.post(
         console.log(err)
     });
 
+axios.get(
+    `http://127.0.0.1:8000/engine/${encoded_fen}`,
+    {
+        headers: {'Authorization': `Bearer ${APIKEY}`}
+    }
+).
+    then(res => {
+        console.log(res.data)
+    }).catch(err => {
+        console.log(err)
+    });
 export const [initialBoard, initialBoardMap] = new Rules().populateValidMoves(initFenBoard, king, otherKey);

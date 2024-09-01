@@ -1,14 +1,16 @@
 import { nextTurn, PieceColor } from "../Constants";
 import { Board, BoardMap, Piece } from "../models";
 import { miniMaxAlphaBeta } from "./MiniMax";
-import { findKingKey } from "../rules";
+import { boardToFen, findKingKey } from "../rules";
 import { miniMax } from "./MiniMax/iterDeep";
+import { readBook } from "./API/callBook";
+import { fixFen } from "../rules";
 import Rules from "../rules/Rules";
 import { iterativeDeepening } from "./MiniMax/iterDeep";
 
 export function botPlay(board: Board, boardMap: BoardMap): [string, Board, BoardMap] {
     const botTurn = (board.attributes[0]) ? PieceColor.WHITE : PieceColor.BLACK;
-
+    console.log(readBook(fixFen(boardToFen(board))))
     console.log("searching for the best move:")
     const start = performance.now();
     const bestMoveScore = iterativeDeepening(board, 5000, botTurn, [], "e1", "e1");

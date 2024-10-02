@@ -25,7 +25,7 @@ axios.get(
         console.log(err)
     });
 
-axios.get(
+/*axios.get(
     `http://127.0.0.1:8000/engine/${encoded_fen}`,
     {
         headers: {'Authorization': `Bearer ${APIKEY}`}
@@ -36,4 +36,5 @@ axios.get(
     }).catch(err => {
         console.log(err)
     });
+*/
 export const [initialBoard, initialBoardMap] = new Rules().populateValidMoves(initFenBoard, king, otherKey);

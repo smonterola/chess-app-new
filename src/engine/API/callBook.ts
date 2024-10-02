@@ -18,7 +18,7 @@ export function readBook(fen: string): string {
             //production_response = err
         });
 
-    axios.get(
+    /*axios.get(
         `http://127.0.0.1:8000/engine/${fen}`,
         {
             headers: {'Authorization': `Bearer ${APIKEY}`}
@@ -32,5 +32,6 @@ export function readBook(fen: string): string {
             console.log(err)
             //development_response = err
         });
+    */
     return "";
 }

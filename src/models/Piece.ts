@@ -3,8 +3,8 @@ import { PositionMap } from "./MapAliases";
 import { Position } from "./Position";
 
 const parent = "assets/images/";
-const pieceSet = "default"
-const extension = ".png"
+const pieceSet = "default";
+const extension = ".png";
 
 export class Piece {
     image: string;

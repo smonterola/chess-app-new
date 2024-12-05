@@ -176,9 +176,9 @@ export default function Chessboard() {
     return (
         <div>
             <div>
-                <h1 style={{color: 'white'}}>Status: {GAMEOVER ? 'Game Over' : 'Playing'}
+                <h1 style={{color: 'white', display: "inline-block"}}>Status: {GAMEOVER ? 'Game Over' : 'Playing'} &emsp;
                     </h1>
-                <h1 style={{color: 'white'}}>Move Number: {MOVE_NUM}
+                <h1 style={{color: 'white', display: "inline-block"}}>Move Number: {MOVE_NUM}
                     </h1>
             </div>
             <div 

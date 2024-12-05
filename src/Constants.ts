@@ -32,6 +32,6 @@ export function nextTurn(pieceColor: PieceColor): PieceColor {
 const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 const minDimPx = (vw < vh) ? vw : vh;
-export const TILESIZE = minDimPx / 8;
+export const TILESIZE = minDimPx / 9.75; //allows for the header now //and title
 document.documentElement.style.setProperty("--tileSize", `${TILESIZE}px`);
 

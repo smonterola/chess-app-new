@@ -165,7 +165,7 @@ export default function Chessboard() {
             const piece = pieceMap.get(new Position(i, j).string);
             let image = piece ? piece.image : undefined;
             const highlight = highlightMap.has(new Position(i, j).string) ? true : false;
-            boardUI.push(<Tile key={`${i}${j}`} image={image} number={number} highlight={highlight}/>)
+            boardUI.push(<Tile key={`${i}${j}`} image={image} number={number} highlight={highlight} menu={false}/>)
         }
     }
     return (

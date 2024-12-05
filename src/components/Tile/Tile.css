@@ -34,6 +34,10 @@
     background-color: cornsilk; /*cornsilk */
 }
 
+.menu-tile {
+    background-color: yellowgreen;
+}
+
 .tile img {
     width: calc(var(--tileSize)*0.8);
     /*height: calc(var(--tileSize)*0.9);*/

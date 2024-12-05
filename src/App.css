@@ -9,28 +9,5 @@
   text-align: center;
   font-size: 2.5em;
   margin-bottom: 20px;
-  color: #ff6347; /* Tomato color */
-}
-
-.game-info {
-  display: flex;
-  justify-content: space-around;
-  text-align: center;
-  margin: 20px 0;
-  padding: 10px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.info-item {
-  width: 100px;
-  height: 100px;
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #333;
-}
-
-strong {
-  color: #ff6347; /* Tomato color for labels */
+  color: white;
 }

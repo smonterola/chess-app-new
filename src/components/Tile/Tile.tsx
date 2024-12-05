@@ -4,17 +4,15 @@ interface Props {
     image?: string;
     number: number;
     highlight: boolean;
-    menu: boolean;
 }
 
-export default function Tile({number, image, highlight, menu}: Props) {
+export default function Tile({number, image, highlight}: Props) {
     const className: string = [
         "tile",
         number % 2 === 0 && "black-tile",
         number % 2 !== 0 && "white-tile",
-        menu && "menu-tile",
         highlight && "tile-highlight",
-        image && "chess-piece-tile"
+        image && "chess-piece-tile",
         ].filter(Boolean).join(' ');
     return (
         <div className={className}>

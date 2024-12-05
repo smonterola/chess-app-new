@@ -1,8 +1,0 @@
-#menu {
-    display: grid;
-    grid-template-columns: repeat(8, var(--tileSize));
-    grid-template-rows: repeat(1, var(--tileSize));
-    width: '100%';
-    height: undefined;
-    background-color: black;
-}

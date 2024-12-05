@@ -12,7 +12,8 @@ import { botPlay } from "../../engine/bestMove";
 const pgn = new Map<number, string>();
 export const history = new Map<string, number>();
 let positionHighlight: Position = new Position(-1, -1);
-let GAMEOVER = false;
+export let GAMEOVER = false;
+export let MOVE_NUM = 0;
 
 export default function Chessboard() {
     const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
@@ -26,6 +27,7 @@ export default function Chessboard() {
         if (GAMEOVER) return;
         const chessboard = chessboardRef.current;
         const element = e.target as HTMLElement;
+        //CHECK IF EMPTY SQUARE CLICKED
         if (!chessboard || !element.classList.contains("chess-piece")) {
             if (boardMap.size === 0 || board.attributes[6] >= 50) {
                 GAMEOVER = true;
@@ -33,6 +35,7 @@ export default function Chessboard() {
             }
             const [move, newBoard, newBoardMap] = botPlay(board, boardMap);
             const moveCount = newBoard.attributes[7] - 1;
+            MOVE_NUM = moveCount;
             const append: string = (pgn.has(moveCount)) ? pgn.get(moveCount)!: `${moveCount}.`;
             pgn.set(moveCount, append + " " + move);
             console.log(pgn);
@@ -45,6 +48,7 @@ export default function Chessboard() {
             }
             return;
         }
+        //THIS EXECUTES IF PIECE WAS CLICKED ON
         const getX = (Math.floor((e.clientX - chessboard.offsetLeft) / TILESIZE));
         const getY = (Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - TILESIZE*8) / TILESIZE)));
         setPosition(new Position(getX, getY));
@@ -122,6 +126,7 @@ export default function Chessboard() {
         pieceMap = (nextBoard.pieces);
         setBoard(nextBoard)
         const moveCount = nextBoard.attributes[7] - 1;
+        MOVE_NUM = moveCount;
         const append: string = (pgn.has(moveCount)) ? pgn.get(moveCount)!: `${moveCount}.`;
         pgn.set(moveCount, append + " " + move);
         console.log(pgn);
@@ -165,18 +170,26 @@ export default function Chessboard() {
             const piece = pieceMap.get(new Position(i, j).string);
             let image = piece ? piece.image : undefined;
             const highlight = highlightMap.has(new Position(i, j).string) ? true : false;
-            boardUI.push(<Tile key={`${i}${j}`} image={image} number={number} highlight={highlight} menu={false}/>)
+            boardUI.push(<Tile key={`${i}${j}`} image={image} number={number} highlight={highlight}/>)
         }
     }
     return (
-        <div 
-            onMouseMove={(e) => movePiece(e)}
-            onMouseDown={(e) => grabPiece(e)} 
-            onMouseUp  ={(e) => dropPiece(e)}  
-            id="chessboard"
-            ref={chessboardRef}
-        >   
-            {boardUI}
+        <div>
+            <div>
+                <h1 style={{color: 'white'}}>Status: {GAMEOVER ? 'Game Over' : 'Playing'}
+                    </h1>
+                <h1 style={{color: 'white'}}>Move Number: {MOVE_NUM}
+                    </h1>
+            </div>
+            <div 
+                onMouseMove={(e) => movePiece(e)}
+                onMouseDown={(e) => grabPiece(e)} 
+                onMouseUp  ={(e) => dropPiece(e)}  
+                id="chessboard"
+                ref={chessboardRef}
+            >   
+                {boardUI}
+            </div>
         </div>
     );
 }

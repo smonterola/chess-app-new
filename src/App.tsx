@@ -1,4 +1,3 @@
-import { GAMEOVER, MOVE_NUM } from './components/Chessboard/Chessboard';
 import './App.css';
 import Chessboard from './components/Chessboard/Chessboard';
 

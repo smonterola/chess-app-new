@@ -8,12 +8,12 @@ import { boardToFen, findKingKey } from "../../rules";
 import { initialBoard, initialBoardMap } from "./initChessboard";
 import { updateBoard } from "./updateChessboard";
 import { botPlay } from "../../engine/bestMove";
+//import ResetGame from "../ResetButton/ResetButton";
 
 const pgn = new Map<number, string>();
 export const history = new Map<string, number>();
 let positionHighlight: Position = new Position(-1, -1);
 export let GAMEOVER = false;
-export let MOVE_NUM = 0;
 
 export default function Chessboard() {
     const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
@@ -22,6 +22,33 @@ export default function Chessboard() {
     const [boardMap, setBoards] = useState<BoardMap>(initialBoardMap);
     const chessboardRef = useRef<HTMLDivElement>(null);
     const rules = new Rules();    
+
+    function ResetGame() {
+        const handleClick = () => {
+            setBoard(initialBoard);
+            setBoards(initialBoardMap)
+        };
+    
+        return (
+            <button onClick={handleClick}>
+                Reset Board
+            </button>
+        );
+    }
+
+    function BotPlay() {
+        const handleClick = () => {
+            const [move, newBoard, newBoardMap] = botPlay(board, boardMap);
+            setBoard(newBoard);
+            setBoards(newBoardMap)
+        };
+    
+        return (
+            <button onClick={handleClick}>
+                Bot Play
+            </button>
+        );
+    }
 
     function grabPiece(e: React.MouseEvent) {
         if (GAMEOVER) return;
@@ -33,9 +60,9 @@ export default function Chessboard() {
                 GAMEOVER = true;
                 return;
             }
+            /*
             const [move, newBoard, newBoardMap] = botPlay(board, boardMap);
             const moveCount = newBoard.attributes[7] - 1;
-            MOVE_NUM = moveCount;
             const append: string = (pgn.has(moveCount)) ? pgn.get(moveCount)!: `${moveCount}.`;
             pgn.set(moveCount, append + " " + move);
             console.log(pgn);
@@ -46,6 +73,7 @@ export default function Chessboard() {
             if (history.get(pieceFen)! >= 3) {
                 GAMEOVER = true;
             }
+            */
             return;
         }
         //THIS EXECUTES IF PIECE WAS CLICKED ON
@@ -126,7 +154,6 @@ export default function Chessboard() {
         pieceMap = (nextBoard.pieces);
         setBoard(nextBoard)
         const moveCount = nextBoard.attributes[7] - 1;
-        MOVE_NUM = moveCount;
         const append: string = (pgn.has(moveCount)) ? pgn.get(moveCount)!: `${moveCount}.`;
         pgn.set(moveCount, append + " " + move);
         console.log(pgn);
@@ -176,10 +203,18 @@ export default function Chessboard() {
     return (
         <div>
             <div>
-                <h1 style={{color: 'white'}}>Status: {GAMEOVER ? 'Game Over' : 'Playing'}
+                <h1 style={{color: 'white', display: "inline-block"}}>Status: {GAMEOVER ? 'Game Over' : 'Playing'} &emsp;
                     </h1>
-                <h1 style={{color: 'white'}}>Move Number: {MOVE_NUM}
+                <h1 style={{color: 'white', display: "inline-block"}}>Move Number: {board.attributes[7]} &emsp;
                     </h1>
+                <h1 style={{color: 'white', display: "inline-block"}}>Player Turn: {board.attributes[0] ? "White" : "Black"}
+                    </h1>
+                <div>
+                    <ResetGame />
+                </div>
+                <div>
+                    <BotPlay />
+                </div>
             </div>
             <div 
                 onMouseMove={(e) => movePiece(e)}

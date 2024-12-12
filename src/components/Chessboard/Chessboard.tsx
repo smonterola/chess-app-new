@@ -8,7 +8,6 @@ import { boardToFen, findKingKey } from "../../rules";
 import { initialBoard, initialBoardMap } from "./initChessboard";
 import { updateBoard } from "./updateChessboard";
 import { botPlay } from "../../engine/bestMove";
-import { Link } from 'react-router-dom';
 
 const pgn = new Map<number, string>();
 export const history = new Map<string, number>();
@@ -27,6 +26,7 @@ export default function Chessboard() {
 
     function ResetGame() {
         const handleClick = () => {
+            GAMEOVER = false;
             setPromotionPieceName("Queen");
             setPromotionPieceType(PieceType.QUEN);
             setBoard(initialBoard);

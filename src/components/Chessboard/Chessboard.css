@@ -9,27 +9,27 @@
     display: flex;
     justify-content: space-evenly;
     width: 100%;
-    padding: 5px;
+    padding: 0vh;
     background-color: #333;
-    border-radius: 20px;
-    margin-bottom: 15px;
-    font-size: 0.7rem;
+    border-radius: 4vh;
+    margin-bottom: 1vh;
+    font-size: 0.5rem;
 }
 
 .action-buttons {
     display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 2vw;
+    margin-bottom: 1vh;
 }
 
 .action-button {
     background-color: #0056b3;
     border: none;
     color: white;
-    padding: 10px 15px;
+    padding: 1.2vh;
     text-align: center;
-    font-size: 16px;
-    border-radius: 5px;
+    font-size: 1rem;
+    border-radius: 1vh;
     cursor: pointer;
     transition: 0.3s ease;
 }
@@ -44,7 +44,7 @@
     grid-template-rows: repeat(8, var(--tileSize));
     width: fit-content;
     background-color: black;
-    border: 2px solid white;
-    border-radius: 8px;
+    border: 0.2vh solid white;
+    border-radius: 0.5vh;
 }
 

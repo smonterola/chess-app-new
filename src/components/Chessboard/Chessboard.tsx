@@ -3,12 +3,12 @@ import Tile from "../Tile/Tile";
 import "./Chessboard.css";
 import Rules from "../../rules/Rules";
 import { Piece, Position, BoardMap, Board } from "../../models";
-import { xAxis, yAxis, TILESIZE, PieceColor, GameState, PieceType} from "../../Constants";
+import { xAxis, yAxis, TILESIZE, PieceColor, GameState, PieceType } from "../../Constants";
 import { boardToFen, findKingKey } from "../../rules";
 import { initialBoard, initialBoardMap } from "./initChessboard";
 import { updateBoard } from "./updateChessboard";
 import { botPlay } from "../../engine/bestMove";
-//import ResetGame from "../ResetButton/ResetButton";
+import { Link } from 'react-router-dom';
 
 const pgn = new Map<number, string>();
 export const history = new Map<string, number>();
@@ -28,13 +28,12 @@ export default function Chessboard() {
     function ResetGame() {
         const handleClick = () => {
             setPromotionPieceName("Queen");
-            setPromotionPieceType(PieceType.QUEN)
+            setPromotionPieceType(PieceType.QUEN);
             setBoard(initialBoard);
-            setBoards(initialBoardMap)
+            setBoards(initialBoardMap);
         };
-    
         return (
-            <button onClick={handleClick}>
+            <button className="action-button" onClick={handleClick}>
                 Reset Board
             </button>
         );
@@ -44,13 +43,12 @@ export default function Chessboard() {
         const handleClick = () => {
             const [move, newBoard, newBoardMap] = botPlay(board, boardMap);
             setBoard(newBoard);
-            setBoards(newBoardMap)
+            setBoards(newBoardMap);
         };
-    
         return (
-            <button onClick={handleClick}>
+            <button className="action-button" onClick={handleClick}>
                 Bot Play
-            </button>
+            </button>    
         );
     }
 
@@ -63,87 +61,69 @@ export default function Chessboard() {
             nextPiece.set('Knight', ['Queen', PieceType.QUEN]);
             setPromotionPieceType(nextPiece.get(promotionPieceName)![1]);
             setPromotionPieceName(nextPiece.get(promotionPieceName)![0]);
-
-            let pieceMap = board.pieces;
-            let [whiteKingKey, blackKingKey] = [
-                findKingKey(pieceMap, "e1", PieceColor.WHITE), 
-                findKingKey(pieceMap, "e8", PieceColor.BLACK)
-            ];
-            const [kingKey, otherKey] = turn === PieceColor.WHITE ? [whiteKingKey, blackKingKey] : [blackKingKey, whiteKingKey];
-            const king: Piece = pieceMap.get(kingKey)!;
-            const [_, newBoards] = rules.populateValidMoves(board, king, otherKey, nextPiece.get(promotionPieceName)![1]);
-            setBoards(newBoards);
         };
-
         return (
-            <button onClick={handleClick}>
+            <button className="action-button" onClick={handleClick}>
                 {promotionPieceName}
             </button>
-        )
+        );
+    }
+
+    function OpenLink() {
+        const handleClick = () => {
+            window.open("https://chessmasa.github.io/", "_blank");
+        };
+        return (
+            <button className="action-button" onClick={handleClick}>
+                Docs
+            </button>
+        );
     }
 
     function grabPiece(e: React.MouseEvent) {
         if (GAMEOVER) return;
         const chessboard = chessboardRef.current;
         const element = e.target as HTMLElement;
-        //CHECK IF EMPTY SQUARE CLICKED
         if (!chessboard || !element.classList.contains("chess-piece")) {
             if (boardMap.size === 2 || board.attributes[6] >= 50) {
                 GAMEOVER = true;
                 return;
             }
-            /*
-            const [move, newBoard, newBoardMap] = botPlay(board, boardMap);
-            const moveCount = newBoard.attributes[7] - 1;
-            const append: string = (pgn.has(moveCount)) ? pgn.get(moveCount)!: `${moveCount}.`;
-            pgn.set(moveCount, append + " " + move);
-            console.log(pgn);
-            setBoard(newBoard);
-            setBoards(newBoardMap);
-            const pieceFen = boardToFen(board).split(" ")[0];
-            history.set(pieceFen, history.has(pieceFen) ? history.get(pieceFen)! + 1 : 1);
-            if (history.get(pieceFen)! >= 3) {
-                GAMEOVER = true;
-            }
-            */
             return;
         }
-        //THIS EXECUTES IF PIECE WAS CLICKED ON
         const getX = (Math.floor((e.clientX - chessboard.offsetLeft) / TILESIZE));
-        const getY = (Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - TILESIZE*8) / TILESIZE)));
+        const getY = (Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - TILESIZE * 8) / TILESIZE)));
         setPosition(new Position(getX, getY));
-        const [x, y] = [e.clientX - TILESIZE/2 , e.clientY - TILESIZE/2];
+        const [x, y] = [e.clientX - TILESIZE / 2, e.clientY - TILESIZE / 2];
         element.style.position = "absolute";
         element.style.left = `${x}px`;
         element.style.top = `${y}px`;
-        
+
         setActivePiece(element);
     }
-    
+
     function movePiece(e: React.MouseEvent) {
         const chessboard = chessboardRef.current;
         if (!chessboard || !activePiece || GAMEOVER) {
             return;
         }
         const [minX, minY, maxX, maxY] = [
-            chessboard.offsetLeft - TILESIZE/4, 
-            chessboard.offsetTop  - TILESIZE/4, 
-            chessboard.offsetLeft - TILESIZE/4*3 + chessboard.clientWidth,
-            chessboard.offsetTop  - TILESIZE/4*3 + chessboard.clientHeight
+            chessboard.offsetLeft - TILESIZE / 4,
+            chessboard.offsetTop - TILESIZE / 4,
+            chessboard.offsetLeft - TILESIZE / 4 * 3 + chessboard.clientWidth,
+            chessboard.offsetTop - TILESIZE / 4 * 3 + chessboard.clientHeight
         ];
-        const [x, y] = [e.clientX - TILESIZE/2 , e.clientY - TILESIZE/2]
+        const [x, y] = [e.clientX - TILESIZE / 2, e.clientY - TILESIZE / 2];
         activePiece.style.position = "absolute";
-        //controls the boundaries
+
         let piXel: string = `${x}px`;
-        if (x < minX)        { piXel = `${minX}px`;
-        } else if (x > maxX) { piXel = `${maxX}px`;
-        }
+        if (x < minX) { piXel = `${minX}px`; }
+        else if (x > maxX) { piXel = `${maxX}px`; }
         activePiece.style.left = piXel;
 
         let piYel: string = `${y}px`;
-        if (y < minY)        { piYel = `${minY}px`;
-        } else if (y > maxY) { piYel = `${maxY}px`;
-        }
+        if (y < minY) { piYel = `${minY}px`; }
+        else if (y > maxY) { piYel = `${maxY}px`; }
         activePiece.style.top = piYel;
     }
 
@@ -152,9 +132,9 @@ export default function Chessboard() {
         if (!chessboard || !activePiece || GAMEOVER) {
             return;
         }
-        setActivePiece(null); 
+        setActivePiece(null);
         const x = Math.floor((e.clientX - chessboard.offsetLeft) / TILESIZE);
-        const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - TILESIZE*8) / TILESIZE));
+        const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - TILESIZE * 8) / TILESIZE));
         const cursorP: Position = new Position(x, y);
         if (!cursorP.checkBounds) {
             return;
@@ -164,11 +144,11 @@ export default function Chessboard() {
             activePiece.style.removeProperty("top");
             activePiece.style.removeProperty("left");
             positionHighlight = getPosition.copyPosition;
-            return; 
+            return;
         }
         let pieceMap = board.pieces;
         let [whiteKingKey, blackKingKey] = [
-            findKingKey(pieceMap, "e1", PieceColor.WHITE), 
+            findKingKey(pieceMap, "e1", PieceColor.WHITE),
             findKingKey(pieceMap, "e8", PieceColor.BLACK)
         ];
         const [move, _board] = updateBoard(board, getPosition, cursorP, whiteKingKey, blackKingKey, promotionPieceType);
@@ -179,20 +159,19 @@ export default function Chessboard() {
             activePiece.style.removeProperty("top");
             activePiece.style.removeProperty("left");
             positionHighlight = getPosition.copyPosition;
-            return; 
+            return;
         }
         positionHighlight = getPosition.copyPosition;
         const nextBoard: Board = boardMap.get(move)!;
         pieceMap = (nextBoard.pieces);
-        setBoard(nextBoard)
+        setBoard(nextBoard);
         const moveCount = nextBoard.attributes[7] - 1;
-        const append: string = (pgn.has(moveCount)) ? pgn.get(moveCount)!: `${moveCount}.`;
+        const append: string = (pgn.has(moveCount)) ? pgn.get(moveCount)! : `${moveCount}.`;
         pgn.set(moveCount, append + " " + move);
-        console.log(pgn);
         const turn = (board.attributes[0]) ? PieceColor.BLACK : PieceColor.WHITE;
-        
+
         [whiteKingKey, blackKingKey] = [
-            findKingKey(pieceMap, whiteKingKey, PieceColor.WHITE), 
+            findKingKey(pieceMap, whiteKingKey, PieceColor.WHITE),
             findKingKey(pieceMap, blackKingKey, PieceColor.BLACK)
         ];
         const [kingKey, otherKey] = turn === PieceColor.WHITE ? [whiteKingKey, blackKingKey] : [blackKingKey, whiteKingKey];
@@ -200,67 +179,61 @@ export default function Chessboard() {
         const [newPieceMap, newBoards] = rules.populateValidMoves((nextBoard), king, otherKey, promotionPieceType);
         const status: GameState = rules.getStatus(newBoards, newPieceMap.pieces, king);
         const pieceFen = boardToFen(nextBoard).split(" ")[0];
-        history.set(pieceFen, history.has(pieceFen) ? history.get(pieceFen)! + 1 : 1)
+        history.set(pieceFen, history.has(pieceFen) ? history.get(pieceFen)! + 1 : 1);
         if (
-            status === GameState.CHECKMATE || 
-            status === GameState.STALEMATE || 
-            history.get(pieceFen) === 3 || 
+            status === GameState.CHECKMATE ||
+            status === GameState.STALEMATE ||
+            history.get(pieceFen) === 3 ||
             nextBoard.attributes[6] >= 50
         ) {
-            console.log("GAME OVER")
             GAMEOVER = true;
             return;
         }
         setBoards(newBoards);
     }
+
     const pieceMap = board.pieces;
     const turn = (board.attributes[0]) ? PieceColor.WHITE : PieceColor.BLACK;
     const boardUI = [];
     const highlightMap = (
         !GAMEOVER &&
-        positionHighlight.samePosition(getPosition) && 
+        positionHighlight.samePosition(getPosition) &&
         pieceMap.has(getPosition.string) &&
         pieceMap.get(getPosition.string)?.color === turn
     ) ?
         pieceMap.get(getPosition.string)?.moveMap! : new Map();
     for (let j = yAxis.length - 1; j >= 0; j--) {
         for (let i = 0; i < xAxis.length; i++) {
-            const number = i+j;
+            const number = i + j;
             const piece = pieceMap.get(new Position(i, j).string);
             let image = piece ? piece.image : undefined;
             const highlight = highlightMap.has(new Position(i, j).string) ? true : false;
-            boardUI.push(<Tile key={`${i}${j}`} image={image} number={number} highlight={highlight}/>)
+            boardUI.push(<Tile key={`${i}${j}`} image={image} number={number} highlight={highlight}/>);
         }
     }
     return (
-        <div>
-            <div>
-                <h1 style={{color: 'white', display: "inline-block"}}>Status: {GAMEOVER ? 'Game Over' : 'Playing'} &emsp;
-                    </h1>
-                <h1 style={{color: 'white', display: "inline-block"}}>Move Number: {board.attributes[7]} &emsp;
-                    </h1>
-                <h1 style={{color: 'white', display: "inline-block"}}>Player Turn: {board.attributes[0] ? "White" : "Black"}
-                    </h1>
-                <div>
-                    <ResetGame />
-                </div>
-                <div>
-                    <BotPlay />
-                </div>
-                <div>
-                    <TogglePiece />
-                </div> 
-                
+        <div className="chessboard-container">
+            <div className="status-bar">
+                <h1>Status: {GAMEOVER ? 'Game Over' : 'Playing'}</h1>
+                <h1>Move Number: {board.attributes[7]}</h1>
+                <h1>Player Turn: {turn === PieceColor.WHITE ? "White" : "Black"}</h1>
+            </div>
+            <div className="action-buttons">
+                <ResetGame />
+                <BotPlay />
+                <TogglePiece />
+                <OpenLink />
             </div>
             <div 
-                onMouseMove={(e) => movePiece(e)}
-                onMouseDown={(e) => grabPiece(e)} 
-                onMouseUp  ={(e) => dropPiece(e)}  
                 id="chessboard"
                 ref={chessboardRef}
+                onMouseMove={(e) => movePiece(e)}
+                onMouseDown={(e) => grabPiece(e)} 
+                onMouseUp={(e) => dropPiece(e)}
             >   
                 {boardUI}
             </div>
         </div>
     );
 }
+

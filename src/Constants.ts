@@ -22,7 +22,8 @@ export enum GameState {
     CHECKMATE = "Checkmate",
     STALEMATE = "Stalemate",
     CHECK = "Check",
-    PLAY = "Play",
+    PLAY = "Playing",
+    DRAW = "Drawn",
 }
 
 export function nextTurn(pieceColor: PieceColor): PieceColor {

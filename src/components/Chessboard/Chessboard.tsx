@@ -215,7 +215,7 @@ export default function Chessboard() {
         <div className="chessboard-container">
             <div className="status-bar">
                 <h1>Status: {GAMEOVER ? 'Game Over' : 'Playing'}</h1>
-                <h1>Move Number: {board.attributes[7]}</h1>
+                <h1>Move Number: {board.attributes[7] - ((turn === PieceColor.BLACK) ? 1 : 0)}</h1>
                 <h1>Player Turn: {turn === PieceColor.WHITE ? "White" : "Black"}</h1>
             </div>
             <div className="action-buttons">

@@ -59,8 +59,19 @@ export default function Chessboard() {
             nextPiece.set('Rook', ['Bishop', PieceType.BSHP]);
             nextPiece.set('Bishop', ['Knight', PieceType.NGHT]);
             nextPiece.set('Knight', ['Queen', PieceType.QUEN]);
+            
+            const [whiteKingKey, blackKingKey] = [
+                findKingKey(pieceMap, "e1", PieceColor.WHITE),
+                findKingKey(pieceMap, "e8", PieceColor.BLACK)
+            ];
+            const [kingKey, otherKey] = turn === PieceColor.WHITE ? [whiteKingKey, blackKingKey] : [blackKingKey, whiteKingKey];
+            const king: Piece = pieceMap.get(kingKey)!;
+            const [_newPieceMap, newBoards] = rules.populateValidMoves(board, king, otherKey, nextPiece.get(promotionPieceName)![1]);
+            console.log(newBoards);
+            setBoards(newBoards);
             setPromotionPieceType(nextPiece.get(promotionPieceName)![1]);
             setPromotionPieceName(nextPiece.get(promotionPieceName)![0]);
+            
         };
         return (
             <button className="action-button" onClick={handleClick}>
@@ -151,7 +162,9 @@ export default function Chessboard() {
             findKingKey(pieceMap, "e1", PieceColor.WHITE),
             findKingKey(pieceMap, "e8", PieceColor.BLACK)
         ];
+        
         const [move, _board] = updateBoard(board, getPosition, cursorP, whiteKingKey, blackKingKey, promotionPieceType);
+        console.log(boardMap)
         const validMove = rules.canMove(boardMap, move);
 
         if (!validMove) {

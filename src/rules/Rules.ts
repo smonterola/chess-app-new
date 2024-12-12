@@ -17,6 +17,7 @@ export default class Rules {
         board: Board,
         king: Piece,
         enemyKing: string,
+        promotePiece: PieceType,
     ): [Board, BoardMap] {
         const pMap: PieceMap = (board.pieces);
         const attributes = board.attributes;
@@ -49,6 +50,7 @@ export default class Rules {
                 enemyKingKey,
                 check,
                 pinMap,
+                promotePiece,
             );
             for (let [move, nextBoard] of destinationBoards) {
                 nextBoards.set(move, nextBoard);
@@ -66,6 +68,7 @@ export default class Rules {
         enemyKingKey: string,
         check: boolean,
         pinMap: PositionMap,
+        promotePiece: PieceType,
     ): [boolean, string, Board] { //return legal moves. Also return the would be newPieceMap and the would be evaluation
         const startingPosition = piece.position.clone;
         const [move, nextBoard, didEnPassant] = updateBoard( //change the attributes here
@@ -74,6 +77,7 @@ export default class Rules {
             destination,
             king.position.string,
             enemyKingKey,
+            promotePiece,
         );
         const pKing = (piece.type !== PieceType.KING) ? 
             king.position : destination;
@@ -98,6 +102,7 @@ export default class Rules {
         enemyKing: string,
         check: boolean,
         pinMap: PositionMap,
+        promotePiece: PieceType,
     ): [PositionMap, BoardMap] {
         const pMap: PieceMap = board.pieces; //does NOT need deep clone
         const moveMap = piece.moveMap ? piece.moveMap : new Map();
@@ -112,6 +117,7 @@ export default class Rules {
                 enemyKingKey,
                 check,
                 pinMap,
+                promotePiece,
             );
             if (!isLegal) {
                 moveMap.delete(destination.string);

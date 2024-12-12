@@ -10,6 +10,7 @@ export function updateBoard(
     p1: Position, 
     kW: string,
     kB: string,
+    promotePiece: PieceType
 ): [string, Board, boolean] {  //return if a capture or promotion happened and the board. Cannot check if mate/stalemate/check just yet
     const pieceMap: PieceMap = deepClone(board.pieces);
     const [turn0, wS0, wL0, bS0, bL0, enPassant0, prevHalfMoves, prevMoveCount] = board.attributes;
@@ -63,7 +64,7 @@ export function updateBoard(
     if (piece.type === PieceType.PAWN) {
         halfMoves = -1;
         if (canPromote(piece)) {
-            const promotionType: PieceType = PieceType.QUEN;
+            const promotionType: PieceType = promotePiece;
             piece = promotePawn(piece, promotionType);
             promotion = "=" + promotionType;
         } else if (Math.abs(p1.y - p0.y) === 2) {

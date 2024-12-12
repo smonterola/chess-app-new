@@ -1,7 +1,7 @@
 import { Board, Piece } from "../../models";
 import Rules from "../../rules/Rules";
 import { fenToBoard, findKingKey, fixFen } from "../../rules";
-import { PieceColor } from "../../Constants";
+import { PieceColor, PieceType } from "../../Constants";
 import axios from 'axios';
 import { APIKEY } from "../../misc/APIKEY";
 
@@ -37,4 +37,4 @@ axios.get(
         console.log(err)
     });
 */
-export const [initialBoard, initialBoardMap] = new Rules().populateValidMoves(initFenBoard, king, otherKey);
+export const [initialBoard, initialBoardMap] = new Rules().populateValidMoves(initFenBoard, king, otherKey, PieceType.QUEN);

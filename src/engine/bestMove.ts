@@ -1,4 +1,4 @@
-import { nextTurn, PieceColor } from "../Constants";
+import { nextTurn, PieceColor, PieceType } from "../Constants";
 import { Board, BoardMap, Piece } from "../models";
 import { miniMaxAlphaBeta } from "./MiniMax";
 import { boardToFen, findKingKey } from "../rules";
@@ -41,6 +41,6 @@ export function botPlay(board: Board, boardMap: BoardMap): [string, Board, Board
     ];
     const [kingKey, otherKey] = nextTurn(botTurn) === PieceColor.WHITE ? [whiteKingKey, blackKingKey] : [blackKingKey, whiteKingKey];
     const king: Piece = pieceMap.get(kingKey)!;
-    const nextBoards = new Rules().populateValidMoves(newBoard, king, otherKey)[1];
+    const nextBoards = new Rules().populateValidMoves(newBoard, king, otherKey, PieceType.QUEN)[1];
     return [move, newBoard, nextBoards];
 }

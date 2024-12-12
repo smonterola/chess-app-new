@@ -3,7 +3,7 @@ import Tile from "../Tile/Tile";
 import "./Chessboard.css";
 import Rules from "../../rules/Rules";
 import { Piece, Position, BoardMap, Board } from "../../models";
-import { xAxis, yAxis, TILESIZE, PieceColor, GameState} from "../../Constants";
+import { xAxis, yAxis, TILESIZE, PieceColor, GameState, PieceType} from "../../Constants";
 import { boardToFen, findKingKey } from "../../rules";
 import { initialBoard, initialBoardMap } from "./initChessboard";
 import { updateBoard } from "./updateChessboard";
@@ -21,10 +21,14 @@ export default function Chessboard() {
     const [board, setBoard] = useState<Board>(initialBoard);
     const [boardMap, setBoards] = useState<BoardMap>(initialBoardMap);
     const chessboardRef = useRef<HTMLDivElement>(null);
+    const [promotionPieceType, setPromotionPieceType] = useState<PieceType>(PieceType.QUEN);
+    const [promotionPieceName, setPromotionPieceName] = useState<string>("Queen");
     const rules = new Rules();    
 
     function ResetGame() {
         const handleClick = () => {
+            setPromotionPieceName("Queen");
+            setPromotionPieceType(PieceType.QUEN)
             setBoard(initialBoard);
             setBoards(initialBoardMap)
         };
@@ -50,13 +54,41 @@ export default function Chessboard() {
         );
     }
 
+    function TogglePiece() {
+        const handleClick = () => {
+            const nextPiece = new Map<string, [string, PieceType]>();
+            nextPiece.set('Queen', ['Rook', PieceType.ROOK]);
+            nextPiece.set('Rook', ['Bishop', PieceType.BSHP]);
+            nextPiece.set('Bishop', ['Knight', PieceType.NGHT]);
+            nextPiece.set('Knight', ['Queen', PieceType.QUEN]);
+            setPromotionPieceType(nextPiece.get(promotionPieceName)![1]);
+            setPromotionPieceName(nextPiece.get(promotionPieceName)![0]);
+
+            let pieceMap = board.pieces;
+            let [whiteKingKey, blackKingKey] = [
+                findKingKey(pieceMap, "e1", PieceColor.WHITE), 
+                findKingKey(pieceMap, "e8", PieceColor.BLACK)
+            ];
+            const [kingKey, otherKey] = turn === PieceColor.WHITE ? [whiteKingKey, blackKingKey] : [blackKingKey, whiteKingKey];
+            const king: Piece = pieceMap.get(kingKey)!;
+            const [_, newBoards] = rules.populateValidMoves(board, king, otherKey, nextPiece.get(promotionPieceName)![1]);
+            setBoards(newBoards);
+        };
+
+        return (
+            <button onClick={handleClick}>
+                {promotionPieceName}
+            </button>
+        )
+    }
+
     function grabPiece(e: React.MouseEvent) {
         if (GAMEOVER) return;
         const chessboard = chessboardRef.current;
         const element = e.target as HTMLElement;
         //CHECK IF EMPTY SQUARE CLICKED
         if (!chessboard || !element.classList.contains("chess-piece")) {
-            if (boardMap.size === 0 || board.attributes[6] >= 50) {
+            if (boardMap.size === 2 || board.attributes[6] >= 50) {
                 GAMEOVER = true;
                 return;
             }
@@ -139,7 +171,7 @@ export default function Chessboard() {
             findKingKey(pieceMap, "e1", PieceColor.WHITE), 
             findKingKey(pieceMap, "e8", PieceColor.BLACK)
         ];
-        const [move, _board] = updateBoard(board, getPosition, cursorP, whiteKingKey, blackKingKey);
+        const [move, _board] = updateBoard(board, getPosition, cursorP, whiteKingKey, blackKingKey, promotionPieceType);
         const validMove = rules.canMove(boardMap, move);
 
         if (!validMove) {
@@ -165,7 +197,7 @@ export default function Chessboard() {
         ];
         const [kingKey, otherKey] = turn === PieceColor.WHITE ? [whiteKingKey, blackKingKey] : [blackKingKey, whiteKingKey];
         const king: Piece = pieceMap.get(kingKey)!;
-        const [newPieceMap, newBoards] = rules.populateValidMoves((nextBoard), king, otherKey);
+        const [newPieceMap, newBoards] = rules.populateValidMoves((nextBoard), king, otherKey, promotionPieceType);
         const status: GameState = rules.getStatus(newBoards, newPieceMap.pieces, king);
         const pieceFen = boardToFen(nextBoard).split(" ")[0];
         history.set(pieceFen, history.has(pieceFen) ? history.get(pieceFen)! + 1 : 1)
@@ -215,6 +247,10 @@ export default function Chessboard() {
                 <div>
                     <BotPlay />
                 </div>
+                <div>
+                    <TogglePiece />
+                </div> 
+                
             </div>
             <div 
                 onMouseMove={(e) => movePiece(e)}

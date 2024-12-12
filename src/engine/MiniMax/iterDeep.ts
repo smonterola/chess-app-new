@@ -1,4 +1,4 @@
-import { GameState, PieceColor } from "../../Constants";
+import { GameState, PieceColor, PieceType } from "../../Constants";
 import { Board, BoardMap, Piece, getPOV } from "../../models";
 import { findKingKey } from "../../rules";
 import Rules from "../../rules/Rules";
@@ -71,7 +71,7 @@ export function miniMax(
     kingKey = findKingKey(pieceMap, kingKey, (color));
     const king: Piece = pieceMap.get(kingKey)!;
     const rules = new Rules();
-    const [newBoard, nextBoards] = rules.populateValidMoves(board, king, nextKing);
+    const [newBoard, nextBoards] = rules.populateValidMoves(board, king, nextKing, PieceType.QUEN);
     const newPieceMap = newBoard.pieces;
     const status = rules.getStatus(nextBoards, newPieceMap, king);
     /* end if the game is over */

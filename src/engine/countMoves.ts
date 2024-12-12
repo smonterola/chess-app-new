@@ -1,4 +1,4 @@
-import { GameState, PieceColor, nextTurn } from "../Constants";
+import { GameState, PieceColor, PieceType, nextTurn } from "../Constants";
 import { Board, Piece } from "../models";
 import { findKingKey } from "../rules";
 import Rules from "../rules/Rules";
@@ -18,7 +18,7 @@ export function sumMoves(
     kingKey = findKingKey(pieceMap, kingKey, (color));
     const king: Piece = pieceMap.get(kingKey)!;
     const rules = new Rules();
-    const [newBoard, nextBoards] = rules.populateValidMoves(board, king, nextKing);
+    const [newBoard, nextBoards] = rules.populateValidMoves(board, king, nextKing, PieceType.QUEN);
     const newPieceMap = newBoard.pieces;
     const status = rules.getStatus(nextBoards, newPieceMap, king);
     switch(status) {
